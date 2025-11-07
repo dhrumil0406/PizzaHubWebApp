@@ -9,6 +9,7 @@ use App\Models\Categories;
 use App\Models\UsersAdmin;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\PizzaItems;
 use App\Models\PizzaCart;
 use Carbon\Carbon;
@@ -263,7 +264,8 @@ class CartController extends Controller
     {
         $orderDetails = Order::where('orderid', $orderid)->first();
         $orderItems = OrderItem::where('orderid', $orderid)->get();
-        $pdf = PDF::loadView('order_pdf', compact('orderDetails', 'orderItems'));
+        $paymentDetails = Payment::where('orderid', $orderid)->first();
+        $pdf = PDF::loadView('order_pdf', compact('orderDetails', 'orderItems', 'paymentDetails'));
         return $pdf->download('Order_' . $orderid . '.pdf');
     }
 
@@ -330,7 +332,7 @@ class CartController extends Controller
     {
         if (session('userloggedin') && session('userloggedin') == true) {
             $userId = session('userId');
-            $orders = Order::where('userid', $userId)->orderBy('orderdate')->get();
+            $orders = Order::where('userid', $userId)->orderBy('orderdate', 'desc')->get();
             return view('viewOrder', compact('orders'));
         } else {
             $orders = [];

@@ -13,12 +13,14 @@ return new class extends Migration
             $table->foreignId('userid'); // assuming FK to users table
             $table->string('fullname', 30);
             $table->string('email', 30);
+            $table->bigInteger('addressid', 10);
             $table->string('address', 100);
             $table->string('zip', 10);
             $table->string('phoneno', 15);
             $table->decimal('totalfinalprice', 10, 2);
             $table->decimal('discountedtotalprice', 10, 2);
-            $table->tinyInteger('paymentmethod'); // 1 = COD, 2 = Online
+            $table->bigInteger('paymentid',10)->nullable();
+            $table->tinyInteger('paymentmethod'); // 1 = COD, 2 = Online, 3 = upi
             $table->tinyInteger('orderstatus')->default(1);
             $table->timestamp('orderdate')->useCurrent();
 

@@ -364,13 +364,13 @@ class UserController extends Controller
             $mail->SMTPSecure = 'ssl';                                  //Enable implicit TLS encryption
             $mail->Port       =  465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-            $mail->Username   = 'bunkers0006@gmail.com';                     //SMTP username
-            $mail->Password   = 'tarrxnpmpufadtaf';                               //SMTP password
+            $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
+            $mail->Password   = 'eiojjxbwfkatmfgc';                               //SMTP password
             // $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
             // $mail->Password   = 'ctznzsfvutdpnqwa';                               //SMTP password
 
             $mail->setFrom($user->email, $user->firstname . ' ' . $user->lastname); //Set sender email and name
-            $mail->addAddress('bunkers0006@gmail.com', 'Pizza Hub');     //Add a recipient
+            $mail->addAddress('dhrumilmandaviya464@gmail.com');     //Add a recipient
 
             $mail->isHTML(true);                                  //Set email format to HTML
 
@@ -439,13 +439,13 @@ class UserController extends Controller
             $mail->SMTPSecure = 'ssl';                                  //Enable implicit TLS encryption
             $mail->Port       =  465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-            $mail->Username   = 'bunkers0006@gmail.com';                     //SMTP username
-            $mail->Password   = 'tarrxnpmpufadtaf';                               //SMTP password
+            $mail->Username   = 'dhrumilmandvaiya464@gmail.com';                     //SMTP username
+            $mail->Password   = 'eiojjxbwfkatmfgc';                               //SMTP password
             // $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
             // $mail->Password   = 'ctznzsfvutdpnqwa';                               //SMTP password
 
-            $mail->setFrom('bunkers0006@gmail.com', 'Pizza Hub'); //Set sender email and name
-            $mail->addAddress($user->email, $user->firstname . ' ' . $user->lastname);     //Add a recipient
+            $mail->setFrom('dhrumilmandaviya464@gmail.com', 'PizzaHub Support'); //Set sender email and name
+            $mail->addAddress($user->email);     //Add a recipient
 
             $mail->isHTML(true);                                  //Set email format to HTML
 

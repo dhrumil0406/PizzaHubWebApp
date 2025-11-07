@@ -100,11 +100,40 @@
                     <td>
                         @if ($orderDetails->paymentmethod == 1)
                             Cash On Delivery
+                        @elseif($orderDetails->paymentmethod == 2)
+                            Online Payment with Card
                         @else
-                            Online Payment
+                            Online Payment with UPI
                         @endif
                     </td>
                 </tr>
+                @if ($orderDetails->paymentmethod == 2 || $orderDetails->paymentmethod == 3)
+                    <tr>
+                        <td><strong>Payment ID:</strong></td>
+                        <td>{{ $orderDetails->paymentid ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Transaction ID:</strong></td>
+                        <td>{{ $paymentDetails->transactionid ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Status:</strong></td>
+                        <td>{{ $paymentDetails->status ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IP Address:</strong></td>
+                        <td>{{ $paymentDetails->ip  ?? 'N/A' }}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td><strong>Payment ID:</strong></td>
+                        <td>{{ $orderDetails->paymentid ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Status:</strong></td>
+                        <td>Pending (Cash On Delivery)</td>
+                    </tr>
+                @endif
             </table>
         </div>
         <div class="user-info">
@@ -137,26 +166,67 @@
             <thead>
                 <tr>
                     <th>Sr No.</th>
-                    <th>Pizza Name</th>
+                    <th>Pizza / Combo Name</th>
                     <th>Quantity</th>
                     <th>Price (Rs.)</th>
                     <th>Total (Rs.)</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($orderItems as $index => $item)
-                    @php
-                        $pizzaId = $item->pizzaid;
-                        $pizzaItem = App\Models\PizzaItems::find($pizzaId);
-                    @endphp
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $pizzaItem->pizzaname ?? 'N/A' }}</td>
-                        <td>{{ $item->quantity ?? 'N/A' }}</td>
-                        <td>{{ $pizzaItem->pizzaprice ?? 'N/A' }}</td>
-                        <td>{{ $item->quantity * $pizzaItem->pizzaprice ?? 'N/A' }}</td>
-                    </tr>
-                @endforeach
+                @php
+                    $comboGroups = [];
+                    $index = 1; // only for pizzas + combo main row
+
+                    // Group by catid
+                    foreach ($orderItems as $item) {
+                        if ($item->catid != 0) {
+                            $comboGroups[$item->catid][] = $item;
+                        } else {
+                            // Normal pizza
+                            $pizzaItem = App\Models\PizzaItems::find($item->pizzaid);
+                @endphp
+                            <tr>
+                                <td>{{ $index }}</td>
+                                <td>{{ $pizzaItem->pizzaname ?? 'N/A' }}</td>
+                                <td>{{ $item->quantity ?? 'N/A' }}</td>
+                                <td>{{ $pizzaItem->pizzaprice ?? 'N/A' }}</td>
+                                <td>{{ $item->quantity * ($pizzaItem->pizzaprice ?? 0) }}</td>
+                            </tr>
+                @php
+                            $index++;
+                        }
+                    }
+
+                    // Handle combos
+                    foreach ($comboGroups as $catId => $comboItems) {
+                        $categoryItem = App\Models\Categories::find($catId);
+                @endphp
+                        <!-- Combo main row -->
+                        <tr>
+                            <td>{{ $index }}</td>
+                            <td><strong>{{ $categoryItem->catname ?? 'Combo' }}</strong></td>
+                            <td>{{ $comboItems[0]->quantity ?? 1 }}</td>
+                            <td>{{ $categoryItem->comboprice ?? 'N/A' }}</td>
+                            <td><strong>{{ $comboItems[0]->quantity * $categoryItem->comboprice ?? 'N/A' }}</strong></td>
+                        </tr>
+                @php
+                        $index++;
+
+                        // Child pizzas (no index)
+                        foreach ($comboItems as $comboItem) {
+                            $pizzaItem = App\Models\PizzaItems::find($comboItem->pizzaid);
+                @endphp
+                            <tr>
+                                <td></td>
+                                <td>* {{ $pizzaItem->pizzaname ?? 'N/A' }}</td>
+                                <td>{{ $comboItem->quantity ?? 'N/A' }}</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                @php
+                        }
+                    }
+                @endphp
             </tbody>
         </table>
         <div class="total">
@@ -170,38 +240,6 @@
             <p><strong>Discounted Price:</strong>
                 ₹{{ number_format($orderDetails->discountedtotalprice ?? 0, 2) }}/-Rs.</p>
         </div>
-
-        @if ($orderDetails->paymentmethod == 2)
-            <div class="payment-info">
-                <h4>Payment Information:</h4>
-                <table>
-                    <tr>
-                        <td><strong>Payment ID:</strong></td>
-                        <td>{{ $paymentDetails->payment_id ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Payment Email:</strong></td>
-                        <td>{{ $paymentDetails->email ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Payment Name:</strong></td>
-                        <td>{{ $paymentDetails->name ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total Paid:</strong></td>
-                        <td>₹{{ number_format($paymentDetails->total_amount ?? 0, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Payment Status:</strong></td>
-                        <td>{{ $paymentDetails->status ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>IP Address:</strong></td>
-                        <td>{{ $paymentDetails->ip ?? 'N/A' }}</td>
-                    </tr>
-                </table>
-            </div>
-        @endif
 
         <div class="footer">
             <p>Thank you for ordering from Pizza Hub!</p>
