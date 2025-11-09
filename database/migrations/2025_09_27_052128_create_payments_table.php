@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('ip', 45)->nullable(); // IP address of payer
             $table->decimal('amount', 10, 2);
             $table->string('currency', 10)->default('INR');
-            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending')->comment('e.g. pending, completed, failed, refunded');
             $table->json('meta')->nullable(); // store raw gateway response or extra info
             $table->timestamps(); // ✅ correct way
         });

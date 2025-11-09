@@ -157,7 +157,6 @@ class CartController extends Controller
         $fullname = $request->fullname;
         $email = $request->email;
         $address = $request->address;
-        $zipcode = $request->zipcode;
         $phoneNo = $request->phoneNo;
         $totalFinalPrice = session('totalFinalPrice');
         $discountedTotalPrice = session('discountedTotalPrice');
@@ -174,7 +173,6 @@ class CartController extends Controller
                     'fullname' => $fullname,
                     'email' => $email,
                     'address' => $address,
-                    'zip' => $zipcode,
                     'phoneno' => $phoneNo,
                     'totalfinalprice' => $totalFinalPrice,
                     'discountedtotalprice' => $discountedTotalPrice,

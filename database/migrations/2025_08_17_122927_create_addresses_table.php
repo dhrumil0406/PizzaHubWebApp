@@ -16,17 +16,19 @@ return new class extends Migration
             $table->unsignedBigInteger('userid'); // Foreign key to users_admins
 
             $table->enum('addressType', ['Home', 'Office', 'Other'])->default('Home');
-            $table->string('name', 100);
-            $table->string('apartmentNo', 50)->nullable();
-            $table->string('buildingName', 100)->nullable();
-            $table->string('streetArea', 150)->nullable();
-            $table->string('city', 100);
+            $table->string('name', 30);
+            $table->string('apartmentNo', 5)->nullable();
+            $table->string('buildingName', 20)->nullable();
+            $table->string('streetArea', 15)->nullable();
+            $table->string('city', 20)->nullable();
+            $table->string('latitude', 30)->nullable();
+            $table->string('longitude', 30)->nullable();
             $table->timestamp('createdAt')->useCurrent();
             // Foreign key constraint
             $table->foreign('userid')
-                  ->references('userid')->on('users_admins')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->references('userid')->on('users_admins')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

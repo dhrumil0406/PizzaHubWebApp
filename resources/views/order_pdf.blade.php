@@ -155,10 +155,6 @@
                     <td><strong>Address:</strong></td>
                     <td>{{ $orderDetails->address ?? 'N/A' }}</td>
                 </tr>
-                <tr>
-                    <td><strong>Zip Code:</strong></td>
-                    <td>{{ $orderDetails->zip ?? 'N/A' }}</td>
-                </tr>
             </table>
         </div>
         <h4>Order Items:</h4>
