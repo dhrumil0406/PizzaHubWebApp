@@ -354,40 +354,128 @@ class UserController extends Controller
 
     /*****************  Contact Us  ****************/
 
-    function sendMailByUser($contactDetails, $user)
+    public function sendMailByUser($contactDetails, $user)
     {
         try {
             $mail = new PHPMailer(true);
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-            $mail->SMTPSecure = 'ssl';                                  //Enable implicit TLS encryption
-            $mail->Port       =  465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->isSMTP();
+            $mail->SMTPAuth   = true;
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port       = 465;
 
-            $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
-            $mail->Password   = 'eiojjxbwfkatmfgc';                               //SMTP password
-            // $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
-            // $mail->Password   = 'ctznzsfvutdpnqwa';                               //SMTP password
+            $mail->Username   = 'dhrumilmandaviya464@gmail.com';
+            $mail->Password   = 'eiojjxbwfkatmfgc';
 
-            $mail->setFrom($user->email, $user->firstname . ' ' . $user->lastname); //Set sender email and name
-            $mail->addAddress('dhrumilmandaviya464@gmail.com');     //Add a recipient
+            $mail->setFrom($user->email, $user->firstname . ' ' . $user->lastname);
+            $mail->addAddress('dhrumilmandaviya464@gmail.com');
+            $mail->isHTML(true);
 
-            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'New Contact Request from ' . $user->firstname . ' ' . $user->lastname;
 
-            $mail->Subject = 'Pizzahub Contact Message.';
-            $mail->Body    = '<h1>Contact Message</h1>
-                            <p>Order ID: ' . $contactDetails->orderid . '</p>
-                            <p>Email: ' . $contactDetails->email . '</p>
-                            <p>Phone No: ' . $contactDetails->phoneno . '</p>
-                            <p>Message: ' . $contactDetails->message . '</p>
-                            <p>Contact Date: ' . $contactDetails->contactdate . '</p>';
+            $mail->Body = '
+                        <div style="font-family: Arial, sans-serif; background-color: #f9fafc; padding: 20px;">
+                            <div style="max-width: 600px; background: #ffffff; border-radius: 10px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                                
+                                <div style="background: #e63946; color: #fff; padding: 16px 24px; text-align: center;">
+                                    <h2 style="margin: 0; font-size: 22px;">New Contact Request</h2>
+                                </div>
+
+                                <div style="padding: 24px;">
+                                    <p style="font-size: 15px; color: #333;">Hello PizzaHub Admin,</p>
+                                    <p style="font-size: 15px; color: #444;">A new customer has submitted a contact message:</p>
+
+                                    <div style="background-color: #f3f4f6; border-left: 4px solid #e63946; padding: 12px 16px; margin: 16px 0; border-radius: 6px;">
+                                        <p><strong>User ID:</strong> ' . htmlspecialchars($user->userid) . '</p>
+                                        <p><strong>Name:</strong> ' . htmlspecialchars($user->firstname . ' ' . $user->lastname) . '</p>
+                                        <p><strong>Email:</strong> ' . htmlspecialchars($contactDetails->email) . '</p>
+                                        <p><strong>Phone:</strong> ' . htmlspecialchars($contactDetails->phoneno) . '</p>
+                                        <p><strong>Order ID:</strong> ' . htmlspecialchars($contactDetails->orderid) . '</p>
+                                        <p><strong>Message:</strong><br>' . nl2br(htmlspecialchars($contactDetails->message)) . '</p>
+                                    </div>
+
+                                    <p style="font-size: 15px; color: #444;">Please review and respond via the admin dashboard.</p>
+
+                                    <p style="margin-top: 20px; font-size: 15px; color: #444;">
+                                        Regards,<br>
+                                        <strong>PizzaHub Automated System</strong>
+                                    </p>
+                                </div>
+
+                                <div style="background: #f8d7da; text-align: center; padding: 10px; color: #721c24; font-size: 13px;">
+                                    © ' . date('Y') . ' PizzaHub. All rights reserved.
+                                </div>
+                            </div>
+                        </div>';
+
             $mail->send();
             $contactDetails->save();
+
             return back()->with('success', 'Message sent successfully!');
         } catch (Exception $e) {
             return back()->with('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
         }
     }
+
+
+    public function sendMailByAdmin($contactDetails, $user)
+    {
+        try {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->SMTPAuth   = true;
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port       = 465;
+
+            $mail->Username   = 'dhrumilmandaviya464@gmail.com';
+            $mail->Password   = 'eiojjxbwfkatmfgc';
+
+            $mail->setFrom('dhrumilmandaviya464@gmail.com', 'PizzaHub Support');
+            $mail->addAddress($user->email);
+            $mail->isHTML(true);
+
+            $mail->Subject = 'PizzaHub Support - Contact Request Received';
+
+            $mail->Body = '
+                <div style="font-family: Arial, sans-serif; background-color: #f9fafc; padding: 20px;">
+                    <div style="max-width: 600px; background: #ffffff; border-radius: 10px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                        
+                        <div style="background: #e63946; color: #fff; padding: 16px 24px; text-align: center;">
+                            <h2 style="margin: 0; font-size: 22px;">PizzaHub Support</h2>
+                        </div>
+
+                        <div style="padding: 24px;">
+                            <p style="font-size: 16px; color: #333;">Hello <strong>' . htmlspecialchars($user->firstname . ' ' . $user->lastname) . '</strong>,</p>
+
+                            <p style="font-size: 15px; color: #444;">We have received your contact request with the following details:</p>
+
+                            <div style="background-color: #f3f4f6; border-left: 4px solid #e63946; padding: 12px 16px; margin: 16px 0; border-radius: 6px;">
+                                <p><strong>Order ID:</strong> ' . htmlspecialchars($contactDetails->orderid) . '</p>
+                                <p><strong>Phone:</strong> ' . htmlspecialchars($contactDetails->phoneno) . '</p>
+                                <p><strong>Message:</strong><br>' . nl2br(htmlspecialchars($contactDetails->message)) . '</p>
+                            </div>
+
+                            <p style="font-size: 15px; color: #444;">Our support team will contact you soon with a response.</p>
+
+                            <p style="margin-top: 20px; font-size: 15px; color: #444;">Best regards,<br>
+                            <strong>PizzaHub Support Team</strong><br>
+                            <a href="mailto:pizzahub.support@gmail.com" style="color: #e63946; text-decoration: none;">pizzahub.support@gmail.com</a></p>
+                        </div>
+
+                        <div style="background: #f8d7da; text-align: center; padding: 10px; color: #721c24; font-size: 13px;">
+                            © ' . date('Y') . ' PizzaHub. All rights reserved.
+                        </div>
+                    </div>
+                </div>';
+
+            $mail->send();
+            return back();
+        } catch (Exception $e) {
+            return back()->with('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+        }
+    }
+
 
     public function contact()
     {
@@ -416,6 +504,7 @@ class UserController extends Controller
                 $contact->contactdate = Carbon::now('Asia/Kolkata');
 
                 if ($contact) {
+                    $this->sendMailByAdmin($contact, $user);
                     $this->sendMailByUser($contact, $user);
                     return back();
                 } else {
@@ -429,42 +518,66 @@ class UserController extends Controller
         }
     }
 
-    function sendMailByAdmin($contactDetails, $reply, $user)
+    function sendMailReply($contactDetails, $reply, $user)
     {
         try {
             $mail = new PHPMailer(true);
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-            $mail->SMTPSecure = 'ssl';                                  //Enable implicit TLS encryption
-            $mail->Port       =  465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->isSMTP();
+            $mail->SMTPAuth   = true;
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port       = 465;
 
-            $mail->Username   = 'dhrumilmandvaiya464@gmail.com';                     //SMTP username
-            $mail->Password   = 'eiojjxbwfkatmfgc';                               //SMTP password
-            // $mail->Username   = 'dhrumilmandaviya464@gmail.com';                     //SMTP username
-            // $mail->Password   = 'ctznzsfvutdpnqwa';                               //SMTP password
+            $mail->Username   = 'dhrumilmandaviya464@gmail.com';
+            $mail->Password   = 'eiojjxbwfkatmfgc';
 
-            $mail->setFrom('dhrumilmandaviya464@gmail.com', 'PizzaHub Support'); //Set sender email and name
-            $mail->addAddress($user->email);     //Add a recipient
+            $mail->setFrom('dhrumilmandaviya464@gmail.com', 'PizzaHub Support');
+            $mail->addAddress($user->email);
+            $mail->isHTML(true);
 
-            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'PizzaHub Support - Reply to Your Contact Request';
 
-            $mail->Subject = 'Pizzahub Contact Replay.';
-            $mail->Body    = '<h1>Contact Message</h1>
-                            <p>Order ID: ' . $contactDetails->orderid . '</p>
-                            <p>Reply Date: ' . $reply->contactdate . '</p>
-                            <p>Message: ' . $reply->message . '</p>
-                            <p>Thank you for contacting us. We will get back to you soon.</p>
-                            <p>Best Regards,</p>
-                            <p>Pizza Hub</p>';
+            $mail->Body = '
+                    <div style="font-family: Arial, sans-serif; background-color: #f9fafc; padding: 20px;">
+                        <div style="max-width: 600px; background: #ffffff; border-radius: 10px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                            
+                            <div style="background: #e63946; color: #fff; padding: 16px 24px; text-align: center;">
+                                <h2 style="margin: 0; font-size: 22px;">PizzaHub Support</h2>
+                            </div>
+
+                            <div style="padding: 24px;">
+                                <p style="font-size: 16px; color: #333;">Hello <strong>' . htmlspecialchars($user->firstname . ' ' . $user->lastname) . '</strong>,</p>
+
+                                <p style="font-size: 15px; color: #444;">Thank you for contacting <strong>PizzaHub Support</strong>. We have reviewed your message and here is our response:</p>
+
+                                <div style="background-color: #f3f4f6; border-left: 4px solid #e63946; padding: 12px 16px; margin: 16px 0; border-radius: 6px;">
+                                    <p style="margin: 4px 0;"><strong>Order ID:</strong> ' . htmlspecialchars($contactDetails->orderid) . '</p>
+                                    <p style="margin: 4px 0;"><strong>Reply Date:</strong> ' . htmlspecialchars($reply->contactdate) . '</p>
+                                    <p style="margin: 4px 0;"><strong>Our Reply:</strong><br>' . nl2br(htmlspecialchars($reply->message)) . '</p>
+                                </div>
+
+                                <p style="font-size: 15px; color: #444;">If you have any further questions, feel free to reply to this email or contact our support team anytime.</p>
+
+                                <p style="margin-top: 20px; font-size: 15px; color: #444;">Best regards,<br>
+                                <strong>PizzaHub Support Team</strong><br>
+                                <a href="mailto:pizzahub.support@gmail.com" style="color: #e63946; text-decoration: none;">pizzahub.support@gmail.com</a></p>
+                            </div>
+
+                            <div style="background: #f8d7da; text-align: center; padding: 10px; color: #721c24; font-size: 13px;">
+                                © ' . date('Y') . ' PizzaHub. All rights reserved.
+                            </div>
+                        </div>
+                    </div>';
 
             $mail->send();
             $reply->save();
+
             return back()->with('success', 'Reply sent successfully!');
         } catch (Exception $e) {
             return back()->with('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
         }
     }
+
 
     public function submitContactReply(Request $request)
     {
@@ -472,17 +585,17 @@ class UserController extends Controller
             'message' => 'required|string|max:100',
         ]);
 
-        $user = UsersAdmin::where('userid', session('userId'))->first();
         $contact = Contact::where('contactId', $request->contactId)->first();
+        $userid = $contact->userid;
+        $user = UsersAdmin::where('userid', $userid)->first();
         if ($contact) {
             $reply = new ContactReply;
             $reply->contactId = $contact->contactId;
-            $reply->userid = session('userId');
+            $reply->userid = $contact->userid;
             $reply->message = $request->message;
             $reply->contactdate = Carbon::now('Asia/Kolkata');
-
             if ($reply) {
-                $this->sendMailByAdmin($contact, $reply, $user);
+                $this->sendMailReply($contact, $reply, $user);
                 return back();
             } else {
                 return back()->with('error', 'Failed to send message!');

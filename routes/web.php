@@ -5,8 +5,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PizzaItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
-use App\Models\Categories;
-use App\Models\PizzaItems;
 use Illuminate\Support\Facades\Route;
 
 /********************  Admin Part ***********************/
