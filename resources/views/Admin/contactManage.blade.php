@@ -47,13 +47,13 @@
                                         $contacts = DB::table('contacts')->get();
                                     @endphp
                                     @foreach ($contacts as $contact)
-                                        <tr>
+                                        <tr style="font-size: 14px;">
                                             <td>{{ $contact->contactId }}</td>
                                             <td>{{ $contact->userid }}</td>
-                                            <td>{{ $contact->email }}</td>
+                                            <td style="text-align: left">{{ $contact->email }}</td>
                                             <td>{{ $contact->phoneno }}</td>
                                             <td>{{ $contact->orderid }}</td>
-                                            <td>{{ $contact->message }}</td>
+                                            <td style="text-align: left;">{{ $contact->message }}</td>
                                             <td>{{ $contact->contactdate }}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-primary" type="button" data-toggle="modal"
@@ -138,7 +138,7 @@
                                         $contacts = DB::table('contact_replies')->get();
                                     @endphp
                                     @foreach ($contacts as $contact)
-                                        <tr>
+                                        <tr style="font-size: 14px;">
                                             <td>{{ $contact->contactId }}</td>
                                             <td>{{ $contact->message }}</td>
                                             <td>{{ $contact->contactdate }}</td>

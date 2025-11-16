@@ -48,18 +48,18 @@
                                                 $userType = 'Admin';
                                             @endphp
                                         @endif
-                                        <tr>
+                                        <tr style="font-size: 14px;">
                                             <td>{{ $user->userid }}</td>
                                             <td><img src="/img/profilePic.jpg" alt="image for this user"
-                                                    onError="this.src =\'/img/profilePic.jpg\'" width="90px"
-                                                    height="100px">
+                                                    onError="this.src =\'/img/profilePic.jpg\'" width="70px"
+                                                    height="80px">
                                             </td>
                                             <td>{{ $user->username }}</td>
                                             <td>
                                                 <p>First Name : <b>{{ $user->firstname }}</b></p>
                                                 <p>Last Name : <b>{{ $user->lastname }}</b></p>
                                             </td>
-                                            <td>{{ $user->email }}</td>
+                                            <td style="text-align: left;">{{ $user->email }}</td>
                                             <td>{{ $user->phoneno }}</td>
                                             <td>{{ $userType }}</td>
                                             <td class="text-center">
@@ -102,7 +102,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header text-light" style="background-color: #4b5366;">
-                        <h5 class="modal-title" id="newUser">Create New User</h5>
+                        <h5 class="modal-title" id="newUser">Add New User</h5>
                         <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

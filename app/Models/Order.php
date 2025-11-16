@@ -14,7 +14,7 @@ class Order extends Model
     protected $keyType = 'string';
     protected $table = 'orders';
 
-    protected $fillable = ['orderid', 'userid', 'fullname', 'email', 'address', 'phoneno', 'totalfinalprice', 'discountedtotalprice', 'paymentmethod', 'orderstatus', 'orderdate'];
+    protected $fillable = ['orderid', 'userid', 'fullname', 'email', 'addressid', 'address', 'phoneno', 'totalfinalprice', 'discountedtotalprice', 'paymentid', 'paymentmethod', 'orderstatus', 'orderdate'];
 
     public $timestamps = false;
 }

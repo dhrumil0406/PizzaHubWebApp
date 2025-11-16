@@ -21,6 +21,9 @@ class Address extends Model
         'buildingName',
         'streetArea',
         'city',
+        'latitude',
+        'longitude',
+        'createdAt',
     ];
 
     public $timestamps = false;

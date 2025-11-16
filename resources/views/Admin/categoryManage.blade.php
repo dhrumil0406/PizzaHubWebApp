@@ -61,16 +61,15 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($categories as $cat)
-                                                    <tr>
+                                                    <tr style="font-size: 14px;">
                                                         <td class="text-center"><b>{{ $cat->catid }}</b></td>
                                                         <td><img src="/catimages/{{ $cat->catimage }}"
-                                                                alt="image for this Category" width="120px" height="120px"
+                                                                alt="image for this Category" width="100px" height="100px"
                                                                 style="object-fit: contain;">
                                                         </td>
                                                         <td>
                                                             <p>Name : <b>{{ $cat->catname }}</b></p>
-                                                            <p>Description : <b class="truncate">{{ $cat->catdesc }}</b>
-                                                            </p>
+                                                            <p>Description : <b class="truncate">{{ $cat->catdesc }}</b></p>
                                                             @if ($cat->iscombo == 1)
                                                                 <p>Type : <b>Combo</b> | Discount :
                                                                     <b>{{ $cat->discount }} %</b>
@@ -91,9 +90,9 @@
                                                         <td>
                                                             <div class="text-center mt-2">
                                                                 @if ($cat->cattype == 1)
-                                                                    <img src="/img/veg-mark.jpg" height="35px">
+                                                                    <img src="/img/veg-mark.jpg" height="37px">
                                                                 @else
-                                                                    <img src="/img/non-veg-mark.jpg" height="35px">
+                                                                    <img src="/img/non-veg-mark.jpg" height="37px">
                                                                 @endif
                                                             </div>
                                                         </td>

@@ -5,123 +5,144 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header text-light" style="background: #4b5366;">
-                    <h5 class="modal-title" id="orderItem{{ $order->orderid }}">Order Items Order Id:
-                        {{ $order->orderid }}</h5>
+                    <h5 class="modal-title" id="orderItem{{ $order->orderid }}">
+                        Order Items — Order Id: {{ $order->orderid }}
+                    </h5>
                     <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body">
                     <div class="container">
                         <div class="row">
-                            <!-- Shopping cart table -->
+
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="border-0 bg-light">
-                                                <div class="px-3">Pizza Item</div>
-                                            </th>
-                                            <th scope="col" class="border-0 bg-light">
-                                                <div class="text-center">Quantity</div>
+                                            <th colspan="2" class="border-0 bg-light">
+                                                <h4 class="text-center" style="font-family: amerika">Pizza Items</h4>
                                             </th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
+
                                         @php
+                                            // Get all items of this order
                                             $orderItems = App\Models\OrderItem::where(
                                                 'orderid',
                                                 $order->orderid,
                                             )->get();
-                                        @endphp
-                                        @foreach ($orderItems as $orderItem)
-                                            @php
-                                                $pizzaId = $orderItem->pizzaid;
-                                                $itemQuantity = $orderItem->quantity;
-                                                $pizzaItem = App\Models\PizzaItems::find($pizzaId);
 
-                                                $itemTotalPrice = $pizzaItem->pizzaprice * $itemQuantity;
-                                                $discountedPrice =
-                                                    $itemTotalPrice - ($itemTotalPrice * $orderItem->discount) / 100;
+                                            // Group by catid (combo group)
+                                            $groupedItems = $orderItems->groupBy('catid');
+                                        @endphp
+
+                                        @foreach ($groupedItems as $catid => $items)
+                                            @php
+                                                $firstItem = $items->first();
+                                                $qty = $firstItem->quantity;
+
+                                                // SIMPLE PIZZA (no combo)
+                                                if (!$catid) {
+                                                    $pizza = App\Models\PizzaItems::find($firstItem->pizzaid);
+
+                                                    $price = $pizza->pizzaprice;
+                                                    $total = $price * $qty;
+                                                    $discounted = $total - ($total * $firstItem->discount) / 100;
+                                                }
+                                                // COMBO ITEM
+                                                else {
+                                                    $combo = App\Models\Categories::find($catid);
+
+                                                    $price = $combo->comboprice;
+                                                    $total = $price * $qty;
+                                                    $discounted = $total - ($total * $firstItem->discount) / 100;
+
+                                                    // Fetch all pizzas inside combo
+                                                    $comboItems = App\Models\PizzaItems::where('catid', $catid)->pluck(
+                                                        'pizzaname',
+                                                    );
+                                                }
                                             @endphp
-                                            @if ($orderItem->catid)
-                                                @php
-                                                    $cat = App\Models\Categories::find($orderItem->catid);
-                                                    $itemTotalPrice = $cat->comboprice * $itemQuantity;
-                                                    $discountedPrice =
-                                                        $itemTotalPrice -
-                                                        ($itemTotalPrice * $orderItem->discount) / 100;
-                                                @endphp
-                                                <tr>
-                                                    <th scope="row">
-                                                        <div class="p-2">
-                                                            <img src="/pizzaimages/{{ $pizzaItem->pizzaimage }}"
-                                                                alt="" width="70"
-                                                                class="img-fluid rounded shadow-sm">
-                                                            <div class="ml-3 d-inline-block align-middle">
-                                                                <h5 class="mb-0">
-                                                                    <a
-                                                                        href="#"class="text-dark d-inline-block align-middle">{{ $pizzaItem->pizzaname }}</a>
-                                                                </h5>
-                                                                @if ($orderItem->discount > 0)
-                                                                    <h6>Combo Price :</h6>
-                                                                    <h6 style="color: #ff0000">
-                                                                        <del>Rs.{{ number_format($itemTotalPrice, 2) }}/-</del>
-                                                                        <span class="ml-2"
-                                                                            style="color: green;">Rs.{{ number_format($discountedPrice, 2) }}/-</span>
-                                                                    </h6>
-                                                                @else
-                                                                    <h6>Combo Price :</h6>
-                                                                    <h6 style="color: green">
-                                                                        Rs.{{ number_format($itemTotalPrice, 2) }}/-
-                                                                    </h6>
-                                                                @endif
+
+                                            <tr>
+                                                <td colspan="2">
+
+                                                    <!-- CARD START -->
+                                                    <div class="card shadow-sm mb-3" style="border-radius: 14px;">
+                                                        <div class="card-body">
+
+                                                            <div class="d-flex">
+
+                                                                <!-- IMAGE -->
+                                                                <img src="{{ $catid ? '/catimages/' . $combo->catimage : '/pizzaimages/' . $pizza->pizzaimage }}"
+                                                                    width="80" height="80"
+                                                                    style="border-radius: 12px; object-fit: cover;">
+
+                                                                <div class="ml-3">
+
+                                                                    <!-- TITLE -->
+                                                                    <h5 class="mb-1 font-weight-bold">
+                                                                        {{ $catid ? $combo->catname : $pizza->pizzaname }}
+                                                                    </h5>
+
+                                                                    <!-- PRICE + DISCOUNT -->
+                                                                    <div class="d-flex align-items-center">
+
+                                                                        <p class="mb-1 text-muted">
+                                                                            {{ $catid ? 'Combo Price:' : 'Price:' }}
+                                                                            ₹{{ number_format($price, 2) }}
+                                                                        </p>
+
+                                                                        <p class="mx-2 mb-1">|</p>
+
+                                                                        <p class="mb-1">
+                                                                            <span class="text-muted">Discounted
+                                                                                Price:</span>
+                                                                            <span class="text-success font-weight-bold">
+                                                                                ₹{{ number_format($discounted, 2) }}
+                                                                            </span>
+                                                                        </p>
+
+                                                                    </div>
+
+                                                                    <!-- QTY -->
+                                                                    <p class="mb-1">
+                                                                        Qty: <strong>{{ $qty }}</strong>
+                                                                    </p>
+
+                                                                </div>
                                                             </div>
+
+                                                            <!-- COMBO ITEMS LIST -->
+                                                            @if ($catid)
+                                                                <hr>
+                                                                <div>
+                                                                    @foreach ($comboItems as $ci)
+                                                                        <p class="mb-1">🍕 {{ $ci }}</p>
+                                                                    @endforeach
+                                                                </div>
+                                                            @endif
+
                                                         </div>
-                                                    </th>
-                                                    <td class="align-middle text-center">
-                                                        <strong>{{ $itemQuantity }}</strong>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <th scope="row">
-                                                        <div class="p-2">
-                                                            <img src="/pizzaimages/{{ $pizzaItem->pizzaimage }}"
-                                                                alt="" width="70"
-                                                                class="img-fluid rounded shadow-sm">
-                                                            <div class="ml-3 d-inline-block align-middle">
-                                                                <h5 class="mb-0">
-                                                                    <a
-                                                                        href="#"class="text-dark d-inline-block align-middle">{{ $pizzaItem->pizzaname }}</a>
-                                                                </h5>
-                                                                @if ($orderItem->discount > 0)
-                                                                    <h6 style="color: #ff0000">
-                                                                        <del>Rs.{{ number_format($itemTotalPrice, 2) }}/-</del>
-                                                                        <span class="ml-2"
-                                                                            style="color: green;">Rs.{{ number_format($discountedPrice, 2) }}/-</span>
-                                                                    </h6>
-                                                                @else
-                                                                    <h6 style="color: green">
-                                                                        Rs.{{ number_format($itemTotalPrice, 2) }}/-
-                                                                    </h6>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </th>
-                                                    <td class="align-middle text-center">
-                                                        <strong>{{ $itemQuantity }}</strong>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                    </div>
+                                                    <!-- CARD END -->
+
+                                                </td>
+                                            </tr>
                                         @endforeach
+
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- End -->
+
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

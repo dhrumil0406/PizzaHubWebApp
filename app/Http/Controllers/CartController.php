@@ -223,28 +223,28 @@ class CartController extends Controller
                 }
             } elseif ($paymentMethod == 2) {
                 \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-                try{
-                $session = StripeSession::create([
-                    'line_items' => [
-                        [
-                            'price_data' =>  [
-                                'currency' => 'inr',
-                                'product_data' => [
-                                    'name' => 'Pizza Order ' . $orderId,
+                try {
+                    $session = StripeSession::create([
+                        'line_items' => [
+                            [
+                                'price_data' =>  [
+                                    'currency' => 'inr',
+                                    'product_data' => [
+                                        'name' => 'Pizza Order ' . $orderId,
+                                    ],
+                                    'unit_amount' => $discountedTotalPrice,
                                 ],
-                                'unit_amount' => $discountedTotalPrice,
+                                'quantity' => 1,
                             ],
-                            'quantity' => 1,
                         ],
-                    ],
-                    'mode' => 'payment',
-                    'success_url' => 'http://127.0.0.1:8000?session_id={CHECKOUT_SESSION_ID}',
-                    'cancel_url' => 'http://127.0.0.1:8000?session_id={CHECKOUT_SESSION_ID}',
-                ]);
-                }catch (\Exception $e) {
+                        'mode' => 'payment',
+                        'success_url' => 'http://127.0.0.1:8000?session_id={CHECKOUT_SESSION_ID}',
+                        'cancel_url' => 'http://127.0.0.1:8000?session_id={CHECKOUT_SESSION_ID}',
+                    ]);
+                } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Stripe error: ' . 'Payment could not be processed.!');
                 }
-                
+
                 return redirect()->away('$session->url');
                 // return back()->with('success', 'online payment!');
             }
@@ -358,14 +358,77 @@ class CartController extends Controller
     public function updateOrderStatus(Request $request, $orderid)
     {
         $order = Order::where('orderid', $orderid)->first();
-        if ($order) {
-            $order->orderstatus = $request->orderstatus;
-            $order->save();
-            return back()->with('success', 'Order id : ' . $orderid . ' status updated successfully!');
-        } else {
+
+        if (!$order) {
             return back()->with('error', 'Order id : ' . $orderid . ' not found!');
         }
+
+        // UPDATE ORDER STATUS
+        $orderStatus = $request->orderstatus;
+        $order->orderstatus = $orderStatus;
+        $order->save();
+
+        // HANDLE PAYMENT STATUS LOGIC
+        $payment = Payment::where('paymentId', $order->paymentid)->first();
+
+        if ($payment) {
+
+            // 5 = Delivered/Completed
+            if ($orderStatus == 5) {
+                $payment->status = "completed";  // Paid
+            }
+
+            // 6 = Cancelled | Denied
+            else if ($orderStatus == 6) {
+
+                // Online Payments (UPI / Card)
+                if ($order->paymentmethod == 2 || $order->paymentmethod == 3) {
+                    $payment->status = "refunded";  // Auto refund
+                }
+
+                // Cash on Delivery cancelled
+                else {
+                    $payment->status = "failed";  // Cash not received
+                }
+            }
+
+            // Other statuses
+            else{
+                $payment->status = "pending";  // Reset to pending for other statuses
+            }
+
+            $payment->save();
+        }
+
+        return back()->with('success', "Order ID : $orderid updated successfully!");
     }
+
+
+    // public function updatePaymentStatus(Request $request, $orderid)
+    // {
+    //     $order = Order::where('orderid', $orderid)->first();
+    //     if ($order) {
+    //         $orderStatus = $request->orderstatus;
+    //         $payment = Payment::where('paymentId', $order->paymentid)->first();
+    //         if ($payment) {
+    //             if ($orderStatus == 5) {
+    //                 $payment->status = "completed"; // Paid
+    //             }else if( $orderStatus == 6){
+    //                 if($order->paymentmethod == 2 || $order->paymentmethod == 3){
+    //                     $payment->status = "refunded"; // Refunded
+    //                 }else{
+    //                     $payment->status = "failed"; // cash payment failed
+    //                 }
+    //             }
+    //             $payment->save();
+    //             return back()->with('success', 'Payment status for Order id : ' . $orderid . ' updated successfully!');
+    //         }else{
+    //             return back()->with('error', 'Payment record for Order id : ' . $orderid . ' not found!');
+    //         }
+    //     } else {
+    //         return back()->with('error', 'Order id : ' . $orderid . ' not found!');
+    //     }
+    // }
 
     public function updateDeliveryBoy(Request $request, $orderid)
     {

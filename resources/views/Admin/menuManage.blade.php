@@ -78,12 +78,12 @@
                                                         $catname = $category ? $category->catname : 'Unknown';
                                                         $cattype = $category ? $category->cattype : 'Unknown';
                                                     @endphp
-                                                    <tr>
+                                                    <tr style="font-size: 14px;">
                                                         <td class="text-center"><b>{{ $item->pizzaid }}</b></td>
                                                         <td class="text-center"><b>{{ $catname }}</b></td>
                                                         <td class="text-center">
                                                             <img src="/pizzaimages/{{ $item->pizzaimage }}"
-                                                                alt="image for this item" width="120px" height="120px"
+                                                                alt="image for this item" width="100px" height="100px"
                                                                 style="object-fit: contain;">
                                                         </td>
                                                         <td>
@@ -105,9 +105,9 @@
                                                         <td>
                                                             <div class="text-center mt-2">
                                                                 @if ($cattype == 1)
-                                                                    <img src="/img/veg-mark.jpg" height="35px">
+                                                                    <img src="/img/veg-mark.jpg" height="37px">
                                                                 @else
-                                                                    <img src="/img/non-veg-mark.jpg" height="35px">
+                                                                    <img src="/img/non-veg-mark.jpg" height="37px">
                                                                 @endif
                                                             </div>
                                                         </td>
@@ -186,7 +186,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <img src="/pizzaimages/{{ $item->pizzaimage }}" id="itemPhoto" alt="item image"
-                                            width="100" height="100">
+                                            width="100" height="100" style="object-fit: contain;">
                                     </div>
                                 </div>
                             </form>

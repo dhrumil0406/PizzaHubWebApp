@@ -10,7 +10,7 @@
     @endphp
 @endif
 
-@if(session('pdf_url'))
+@if (session('pdf_url'))
     <script>
         window.open('{{ session('pdf_url') }}', '_blank');
     </script>
@@ -203,6 +203,7 @@
                                     <th>Phone No</th>
                                     <th>Amount</th>
                                     <th>Payment Mode</th>
+                                    <th>Payment Status</th>
                                     <th>Order Date</th>
                                     <th>Status</th>
                                     <th>Items</th>
@@ -222,16 +223,41 @@
                                     </tr>
                                 @endif
                                 @foreach ($orders as $order)
-                                    <tr>
+                                    <tr style="font-size: 14px;">
                                         <td>{{ $order->orderid }}</td>
                                         <td>{{ substr($order->address, 0, 20) }}</td>
                                         <td>{{ $order->phoneno }}</td>
                                         <td>Rs.{{ $order->discountedtotalprice }}/-</td>
                                         <td>
                                             @if ($order->paymentmethod == 1)
-                                                Cash on Delivery
+                                                Cash
+                                            @elseif ($order->paymentmethod == 2)
+                                                Card
+                                            @elseif ($order->paymentmethod == 3)
+                                                UPI
+                                            @endif
+                                        </td>
+                                        @php
+                                            $payment = App\Models\Payment::where(
+                                                'paymentId',
+                                                $order->paymentid,
+                                            )->first();
+                                        @endphp
+                                        <td>
+                                            @if ($payment)
+                                                @if ($payment->status == 'completed')
+                                                    <span class="badge badge-success" style="font-size:14px;">Paid</span>
+                                                @elseif ($payment->status == 'refunded')
+                                                    <span class="badge badge-warning"
+                                                        style="font-size:14px;">Refunded</span>
+                                                @elseif ($payment->status == 'failed')
+                                                    <span class="badge badge-danger" style="font-size:14px;">Failed</span>
+                                                @else
+                                                    <span class="badge badge-secondary"
+                                                        style="font-size:14px;">Pending</span>
+                                                @endif
                                             @else
-                                                Online
+                                                <span class="badge badge-secondary" style="font-size:14px;">No Record</span>
                                             @endif
                                         </td>
                                         <td>{{ $order->orderdate }}</td>

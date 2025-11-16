@@ -46,7 +46,17 @@ class CategoryController extends Controller
         ]);
 
         $imageName = time() . '.' . $request->catimage->extension();
-        $request->catimage->move(public_path('catimages'), $imageName);
+        $publicPath = public_path('catimages'); // Default Laravel public folder
+        $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/catimages';
+
+        // ✅ Move to public folder first
+        $request->catimage->move($publicPath, $imageName);
+
+        // ✅ Copy to extra path (create folder if it doesn’t exist)
+        if (!file_exists($extraPath)) {
+            mkdir($extraPath, 0777, true);
+        }
+        copy($publicPath . '/' . $imageName, $extraPath . '/' . $imageName);
 
         // Check if the request has 'iscombo' and set it to 0 if not present
         if (!$request->has('iscombo')) {
@@ -86,8 +96,17 @@ class CategoryController extends Controller
 
         if (isset($request->catimagee)) {
             $imageName = time() . '.' . $request->catimagee->extension();
-            $request->catimagee->move(public_path('catimages'), $imageName);
-            $category->catimage = $imageName;
+            $publicPath = public_path('catimages'); // Default Laravel public folder
+            $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/catimages';
+
+            // ✅ Move to public folder first
+            $request->catimagee->move($publicPath, $imageName);
+
+            // ✅ Copy to extra path (create folder if it doesn’t exist)
+            if (!file_exists($extraPath)) {
+                mkdir($extraPath, 0777, true);
+            }
+            copy($publicPath . '/' . $imageName, $extraPath . '/' . $imageName);
         }
 
         $category->save();

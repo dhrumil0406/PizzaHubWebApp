@@ -53,6 +53,7 @@
                                         @endif
                                     </a>
                                 </th>
+                                <th>Payment Status</th>
                                 <th>
                                     <a href="?sort=orderdate&order={{ $sort === 'orderdate' ? $order : 'asc' }}">
                                         Order Date
@@ -78,7 +79,7 @@
                                 </tr>
                             @endif
                             @foreach ($orders as $order)
-                                <tr>
+                                <tr style="font-size: 14px;">
                                     <td>{{ $order->orderid }}</td>
                                     <td>{{ $order->userid }}</td>
                                     <td data-toggle="tooltip" title="{{ $order->address }}">
@@ -89,8 +90,28 @@
                                     <td>
                                         @if ($order->paymentmethod == 1)
                                             Cash
+                                        @elseif ($order->paymentmethod == 2)
+                                            Card
+                                        @elseif ($order->paymentmethod == 3)
+                                            UPI
+                                        @endif
+                                    </td>
+                                    @php
+                                        $payment = App\Models\Payment::where('paymentId', $order->paymentid)->first();
+                                    @endphp
+                                    <td>
+                                        @if ($payment)
+                                            @if ($payment->status == 'completed')
+                                                <span class="badge badge-success" style="font-size:14px;">Paid</span>
+                                            @elseif ($payment->status == 'refunded')
+                                                <span class="badge badge-warning" style="font-size:14px;">Refunded</span>
+                                            @elseif ($payment->status == 'failed')
+                                                <span class="badge badge-danger" style="font-size:14px;">Failed</span>
+                                            @else
+                                                <span class="badge badge-secondary" style="font-size:14px;">Pending</span>
+                                            @endif
                                         @else
-                                            Online
+                                            <span class="badge badge-secondary" style="font-size:14px;">No Record</span>
                                         @endif
                                     </td>
                                     <td>{{ $order->orderdate }}</td>

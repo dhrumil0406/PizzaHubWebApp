@@ -44,7 +44,17 @@ class PizzaItemController extends Controller
         ]);
 
         $imageName = time() . '.' . $request->pizzaimage->extension();
-        $request->pizzaimage->move(public_path('pizzaimages'), $imageName);
+        $publicPath = public_path('pizzaimages'); // Default Laravel public folder
+        $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/pizzaimages';
+
+        // ✅ Move to public folder first
+        $request->pizzaimage->move($publicPath, $imageName);
+
+        // ✅ Copy to extra path (create folder if it doesn’t exist)
+        if (!file_exists($extraPath)) {
+            mkdir($extraPath, 0777, true);
+        }
+        copy($publicPath . '/' . $imageName, $extraPath . '/' . $imageName);
 
         $pizzaItem = PizzaItems::create([
             'pizzaname' => $request->pizzaname,
@@ -74,8 +84,17 @@ class PizzaItemController extends Controller
 
         if (isset($request->pizzaimagee)) {
             $imageName = time() . '.' . $request->pizzaimagee->extension();
-            $request->pizzaimagee->move(public_path('pizzaimages'), $imageName);
-            $pizzaItem->pizzaimage = $imageName;
+            $publicPath = public_path('pizzaimages'); // Default Laravel public folder
+            $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/pizzaimages';
+
+            // ✅ Move to public folder first
+            $request->pizzaimagee->move($publicPath, $imageName);
+
+            // ✅ Copy to extra path (create folder if it doesn’t exist)
+            if (!file_exists($extraPath)) {
+                mkdir($extraPath, 0777, true);
+            }
+            copy($publicPath . '/' . $imageName, $extraPath . '/' . $imageName);
         }
 
         $pizzaItem->save();
