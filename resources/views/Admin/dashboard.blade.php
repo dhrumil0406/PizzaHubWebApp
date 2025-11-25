@@ -131,9 +131,10 @@
         // Sample data for daily orders (last 7 days)
         // In a real app, this would come from your backend
         const orderData = {
-            dates: ['Apr 19', 'Apr 20', 'Apr 21', 'Apr 22', 'Apr 23', 'Apr 24', 'Apr 25'],
-            counts: [18, 25, 32, 15, 27, 23, 16]
+            dates: ['Nov 19', 'Nov 20', 'Nov 21', 'Nov 22', 'Nov 23', 'Nov 24', 'Nov 25'],
+            counts: [12, 18, 22, 15, 27, 24, 20]
         };
+
 
         // Counter animation
         document.addEventListener('DOMContentLoaded', function() {
@@ -179,10 +180,10 @@
                     datasets: [{
                         data: values,
                         backgroundColor: [
-                            '#FF6384',
-                            '#36A2EB',
-                            '#FFCE56',
-                            '#4BC0C0'
+                            '#FF4D4D', // Bright Red
+                            '#0984E3', // Blue
+                            '#FFB84C', // Yellow
+                            '#2A9D8F', // Strong Blue
                         ],
                         borderWidth: 1
                     }]

@@ -341,14 +341,29 @@ class CartController extends Controller
     public function manageOrders(Request $request)
     {
         $sort = $request->input('sort', 'orderdate'); // default sort column
-        $order = $request->input('order', 'asc');   // default order
+        $order = $request->input('order', 'desc');    // default order
+        $status = $request->input('status');          // filter for orderstatus
 
+        // Allowed sortable fields
         $allowedSorts = ['userid', 'address', 'paymentmethod', 'orderdate'];
         if (!in_array($sort, $allowedSorts)) {
-            $sort = 'orderdate'; // default sort column
+            $sort = 'orderdate';
         }
 
-        $orders = Order::orderBy($sort, $order)->get();
+        // Build query
+        $query = Order::query();
+
+        // Apply filter if selected
+        if (!empty($status)) {
+            $query->where('orderstatus', $status);
+        }
+
+        // Apply sorting
+        $query->orderBy($sort, $order);
+
+        // Pagination (10 rows)
+        $orders = $query->paginate(8)->appends($request->query());
+
         return view('admin.orderManage', compact('orders'));
 
         // $orders = Order::orderBy('orderdate')->get();
@@ -393,7 +408,7 @@ class CartController extends Controller
             }
 
             // Other statuses
-            else{
+            else {
                 $payment->status = "pending";  // Reset to pending for other statuses
             }
 
@@ -429,6 +444,36 @@ class CartController extends Controller
     //         return back()->with('error', 'Order id : ' . $orderid . ' not found!');
     //     }
     // }
+
+    public function payments(Request $request)
+    {
+        $sort = $request->input('sort', 'paymentId');   // default sort
+        $order = $request->input('order', 'desc');       // default order
+        $status = $request->input('status');             // filter by payment status
+
+        // Allowed sortable columns
+        $allowedSorts = ['paymentId', 'orderid', 'amount', 'created_at'];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'created_at';
+        }
+
+        // Build query
+        $query = Payment::query();
+
+        // Apply status filter
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        // Apply sorting
+        $query->orderBy($sort, $order);
+
+        // Final data with pagination
+        $payments = $query->paginate(7)->appends($request->query());
+
+        return view('admin.payments', compact('payments'));
+    }
 
     public function updateDeliveryBoy(Request $request, $orderid)
     {

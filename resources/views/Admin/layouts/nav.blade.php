@@ -37,7 +37,7 @@
 
     <header class="header" id="header">
         <div class="header__toggle">
-            <i class='bx bx-menu' id="header-toggle"></i>
+            <i class='bx bx-menu' id="header-toggle" style="font-size: 24px;"></i>
         </div>
 
         <div class="header__img">
@@ -49,14 +49,18 @@
         <nav class="nav">
             <div>
                 <a href="{{ route('admin.dashboard') }}" class="nav__logo">
-                    <i class='bx bx-layer nav__logo-icon'></i>
-                    <span class="nav__logo-name">Pizza Hub</span>
+                    <img src="{{ asset('/assetsForSideBar/img/pizzaHubLogo2.png') }}" class="sidebar-logo"
+                        alt="Logo">
+
+                    <span class="nav__logo-name sidebar-logo-text">
+                        Pizza Hub
+                    </span>
                 </a>
 
                 <div class="nav__list">
                     <a href="{{ route('admin.dashboard') }}"
                         class="nav__link nav-home {{ Route::currentRouteName() == 'admin.dashboard' ? 'active' : '' }}">
-                        <i class='bx bx-grid-alt nav__icon'></i>
+                        <i class='bx bx-home-alt nav__icon'></i>
                         <span class="nav__name">Home</span>
                     </a>
                     <a href="{{ route('admin.manageCategory') }}"
@@ -66,7 +70,7 @@
                     </a>
                     <a href="{{ route('admin.managePizzaItems') }}"
                         class="nav__link nav-menuManage {{ Route::currentRouteName() == 'admin.managePizzaItems' ? 'active' : '' }}">
-                        <i class='bx bx-message-square-detail nav__icon'></i>
+                        <i class='bx bx-food-menu nav__icon'></i>
                         <span class="nav__name">Pizza Item List</span>
                     </a>
                     <a href="{{ route('admin.manageOrders') }}"
@@ -74,14 +78,19 @@
                         <i class='bx bx-bar-chart-alt-2 nav__icon'></i>
                         <span class="nav__name">Orders</span>
                     </a>
+                    <a href="{{ route('admin.payments') }}"
+                        class="nav__link nav-payments {{ Route::currentRouteName() == 'admin.payments' ? 'active' : '' }}">
+                        <i class='bx bx-credit-card nav__icon'></i>
+                        <span class="nav__name">Payments</span>
+                    </a>
                     <a href="{{ route('admin.contactManage') }}"
                         class="nav__link nav-contactManage {{ Route::currentRouteName() == 'admin.contactManage' ? 'active' : '' }}">
-                        <i class="fas fa-hands-helping"></i>
+                        <i class="fas fa-hands-helping nav__icon"></i>
                         <span class="nav__name">Contact Info</span>
                     </a>
                     <a href="{{ route('admin.userManageView') }}"
                         class="nav__link nav-userManage {{ Route::currentRouteName() == 'admin.userManageView' ? 'active' : '' }}">
-                        <i class='bx bx-user nav__icon'></i>
+                        <i class='bx bx-user-circle nav__icon'></i>
                         <span class="nav__name">Users</span>
                     </a>
                 </div>

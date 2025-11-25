@@ -10,11 +10,28 @@
                         <div class="col-sm-4">
                             <h2>Order <b>Details</b></h2>
                         </div>
-                        <div class="col-sm-8">
-                            <a href="" class="btn btn-primary"><i class="material-icons">&#xE863;</i> <span>Refresh
-                                    List</span></a>
-                            <a href="#" onclick="window.print()" class="btn btn-info"><i
-                                    class="material-icons">&#xE24D;</i> <span>Print</span></a>
+                        <div class="col-sm-8 d-flex justify-content-end align-items-center">
+                            <a href="{{ route('admin.manageOrders') }}" class="btn btn-primary mr-2">
+                                <i class="material-icons">&#xE863;</i>
+                                <span>Refresh</span>
+                            </a>
+                            <a href="#" onclick="window.print()" class="btn btn-info mr-2">
+                                <i class="material-icons">&#xE24D;</i>
+                                <span>Print</span>
+                            </a>
+                            <form method="GET" class="m-0 p-0">
+                                <select name="status" class="form-control" style="width:200px;"
+                                    onchange="this.form.submit()">
+                                    <option value="">All</option>
+                                    <option value="1" {{ request('status') == 1 ? 'selected' : '' }}>Pending</option>
+                                    <option value="2" {{ request('status') == 2 ? 'selected' : '' }}>Confirmed</option>
+                                    <option value="3" {{ request('status') == 3 ? 'selected' : '' }}>Preparing</option>
+                                    <option value="4" {{ request('status') == 4 ? 'selected' : '' }}>Out for Delivery
+                                    </option>
+                                    <option value="5" {{ request('status') == 5 ? 'selected' : '' }}>Delivered</option>
+                                    <option value="6" {{ request('status') == 6 ? 'selected' : '' }}>Denied</option>
+                                </select>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -79,7 +96,17 @@
                                 </tr>
                             @endif
                             @foreach ($orders as $order)
-                                <tr style="font-size: 14px;">
+                                @php
+                                    $rowColor = match ($order->orderstatus) {
+                                        1 => '#fff3cd', // pending
+                                        2 => '#d1ecf1', // confirmed
+                                        3 => '#ffe5d4', // preparing
+                                        4 => '#d4edda', // out for delivery
+                                        5 => '#c3e6cb', // delivered
+                                        default => '#f8d7dd', // denied or unknown
+                                    };
+                                @endphp
+                                <tr style="font-size: 14px; background: {{ $rowColor }};">
                                     <td>{{ $order->orderid }}</td>
                                     <td>{{ $order->userid }}</td>
                                     <td data-toggle="tooltip" title="{{ $order->address }}">
@@ -125,6 +152,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $orders->links('pagination::bootstrap-4') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

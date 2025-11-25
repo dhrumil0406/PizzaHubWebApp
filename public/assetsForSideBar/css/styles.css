@@ -2,29 +2,80 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
 
 /*===== VARIABLES CSS =====*/
-:root{
+:root {
   --header-height: 3rem;
-  --nav-width: 68px;
+  --nav-width: 90px;
 
   /*===== Colors =====*/
   --first-color: #4723D9;
   --first-color-light: #AFA5D9;
   --white-color: #F7F6FB;
-  
+
   /*===== Font and typography =====*/
   --body-font: 'Nunito', sans-serif;
   --normal-font-size: 1rem;
-  
+
   /*===== z index =====*/
   --z-fixed: 100;
 }
 
 /*===== BASE =====*/
-*,::before,::after{
+*,
+::before,
+::after {
   box-sizing: border-box;
 }
 
-body{
+/* Collapsed Sidebar (default state) */
+
+/* Expanded Sidebar (after clicking toggle) */
+.l-navbar.showa {
+  width: 260px !important;
+}
+
+/* Hide logo text when collapsed */
+.l-navbar .sidebar-logo-text {
+  display: none;
+}
+
+/* Show logo text when expanded */
+.l-navbar.showa .sidebar-logo-text {
+  font-family: amerika;
+  font-size: 20px;
+  display: block;
+}
+
+/* Shrink logo when collapsed */
+.l-navbar .sidebar-logo {
+  width: 60px !important;
+  height: 60px !important;
+  margin-left: -10px;
+  transition: .3s ease;
+}
+
+/* Full-size logo when expanded */
+.l-navbar.showa .sidebar-logo {
+  width: 75px !important;
+  height: 75px !important;
+}
+
+.l-navbar .nav__icon{
+  font-size: 23px;
+}
+
+/* Collapsed nav links (icons only) */
+.l-navbar .nav__name {
+  display: none;
+  font-size: 18px;
+}
+
+/* Expanded nav links (icon + text) */
+.l-navbar.showa .nav__name {
+  display: inline-block;
+}
+
+
+body {
   position: relative;
   margin: var(--header-height) 0 0 0;
   padding: 0 1rem;
@@ -33,12 +84,12 @@ body{
   transition: .5s;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
 /*===== HEADER =====*/
-.header{
+.header {
   width: 100%;
   height: var(--header-height);
   position: fixed;
@@ -53,13 +104,13 @@ a{
   transition: .5s;
 }
 
-.header__toggle{
+.header__toggle {
   color: var(--first-color);
   font-size: 1.5rem;
   cursor: pointer;
 }
 
-.header__img{
+.header__img {
   width: 35px;
   height: 35px;
   display: flex;
@@ -68,24 +119,25 @@ a{
   overflow: hidden;
 }
 
-.header__img img{
+.header__img img {
   width: 40px;
 }
 
 /*===== NAV =====*/
-.l-navbar{
+.l-navbar {
   position: fixed;
   top: 0;
   left: -30%;
-  width: var(--nav-width);
+  width: var(--nav-width) !important;
   height: 100vh;
   background-color: var(--first-color);
   padding: .5rem 1rem 0 0;
   transition: .5s;
   z-index: var(--z-fixed);
+  transition: .4s ease;
 }
 
-.nav{
+.nav {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -93,7 +145,8 @@ a{
   overflow: hidden;
 }
 
-.nav__logo, .nav__link{
+.nav__logo,
+.nav__link {
   display: grid;
   grid-template-columns: max-content max-content;
   align-items: center;
@@ -101,52 +154,52 @@ a{
   padding: .5rem 0 .5rem 1.5rem;
 }
 
-.nav__logo{
+.nav__logo {
   margin-bottom: 2rem;
 }
 
-.nav__logo-icon{
+.nav__logo-icon {
   font-size: 1.25rem;
   color: var(--white-color);
 }
 
-.nav__logo-name{
+.nav__logo-name {
   color: var(--white-color);
   font-weight: 700;
 }
 
-.nav__link{
+.nav__link {
   position: relative;
   color: var(--first-color-light);
   margin-bottom: 1.5rem;
   transition: .3s;
 }
 
-.nav__link:hover{
+.nav__link:hover {
   color: var(--white-color);
 }
 
-.nav__icon{
+.nav__icon {
   font-size: 1.25rem;
 }
 
 /*Show navbar movil*/
-.show{
+.show {
   left: 0;
 }
 
 /*Add padding body movil*/
-.body-pd{
+.body-pd {
   padding-left: calc(var(--nav-width) + 1rem);
   transition: padding-left 0.3s ease-in-out;
 }
 
 /*Active links*/
-.active{
+.active {
   color: var(--white-color);
 }
 
-.active::before{
+.active::before {
   content: '';
   position: absolute;
   left: 0;
@@ -157,77 +210,76 @@ a{
 
 /* on phone size show only icons and onclick show icons with page name */
 /* ===== MEDIA QUERIES=====*/
-@media screen and (min-width: 768px){
-  body{
+@media screen and (min-width: 768px) {
+  body {
     margin: calc(var(--header-height) + 1rem) 0 0 0;
     padding-left: calc(var(--nav-width) + 2rem);
   }
 
-  .header{
+  .header {
     height: calc(var(--header-height) + 1rem);
     padding: 0 2rem 0 calc(var(--nav-width) + 2rem);
   }
 
-  .header__img{
+  .header__img {
     width: 40px;
     height: 40px;
   }
 
-  .header__img img{
+  .header__img img {
     width: 45px;
   }
 
-  .l-navbar{
+  .l-navbar {
     left: 0;
     padding: 1rem 1rem 0 0;
   }
 
   /*Show navbar desktop*/
-  .showa{
+  .showa {
     width: calc(var(--nav-width) + 156px);
   }
 
   /*Add padding body desktop*/
-  .body-pd{
+  .body-pd {
     padding-left: calc(var(--nav-width) + 188px);
   }
 }
 
 /* on phone size hide the sidebar and onclick show only icons */
-@media screen and (max-width: 767px){
-  body{
+@media screen and (max-width: 767px) {
+  body {
     margin: calc(var(--header-height) + 1rem) 0 0 0;
     padding-left: calc(var(--nav-width) - 3rem);
   }
 
-  .header{
+  .header {
     height: calc(var(--header-height) + 1rem);
     padding: 0 2rem 0 calc(var(--nav-width) - 2.5rem);
   }
 
-  .header__img{
+  .header__img {
     width: 40px;
     height: 40px;
   }
 
-  .header__img img{
+  .header__img img {
     width: 45px;
   }
 
-  .l-navbar{
+  .l-navbar {
     left: calc(var(--nav-width) - 9rem);
     padding: 1rem 1rem 0 0;
   }
 
   /*Show navbar desktop*/
-  .showa{
+  .showa {
     left: 0;
     /* width: calc(var(--nav-width) + 10rem); */
   }
 
   /*Add padding body desktop*/
-  .body-pd{
+  .body-pd {
     padding-left: calc(var(--nav-width) + 1.2rem);
   }
 }
-

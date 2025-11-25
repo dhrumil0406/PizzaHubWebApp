@@ -97,7 +97,7 @@ class CategoryController extends Controller
         if (isset($request->catimagee)) {
             $imageName = time() . '.' . $request->catimagee->extension();
             $publicPath = public_path('catimages'); // Default Laravel public folder
-            $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/catimages';
+            $extraPath = '/Applications/XAMPP/xamppfiles/htdocs/PizzaHubApp/catimages';
 
             // ✅ Move to public folder first
             $request->catimagee->move($publicPath, $imageName);

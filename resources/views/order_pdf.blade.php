@@ -114,15 +114,11 @@
                     </tr>
                     <tr>
                         <td><strong>Transaction ID:</strong></td>
-                        <td>{{ $paymentDetails->transactionid ?? 'N/A' }}</td>
+                        <td>{{ $paymentDetails->transaction_id ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Payment Status:</strong></td>
                         <td>{{ $paymentDetails->status ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>IP Address:</strong></td>
-                        <td>{{ $paymentDetails->ip  ?? 'N/A' }}</td>
                     </tr>
                 @else
                     <tr>
