@@ -407,11 +407,6 @@ class CartController extends Controller
                 }
             }
 
-            // Other statuses
-            else {
-                $payment->status = "pending";  // Reset to pending for other statuses
-            }
-
             $payment->save();
         }
 

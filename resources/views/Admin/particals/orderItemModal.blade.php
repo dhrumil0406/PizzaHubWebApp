@@ -30,112 +30,151 @@
                                     <tbody>
 
                                         @php
-                                            // Get all items of this order
-                                            $orderItems = App\Models\OrderItem::where(
+                                            $comboGroups = [];
+                                            $normalItems = [];
+
+                                             $orderItems = App\Models\OrderItem::where(
                                                 'orderid',
                                                 $order->orderid,
                                             )->get();
 
-                                            // Group by catid (combo group)
-                                            $groupedItems = $orderItems->groupBy('catid');
+                                            // Divide items into normal pizzas and combos (same as PDF)
+                                            foreach ($orderItems as $item) {
+                                                if ($item->catid != 0) {
+                                                    $comboGroups[$item->catid][] = $item;
+                                                } else {
+                                                    $normalItems[] = $item;
+                                                }
+                                            }
                                         @endphp
 
-                                        @foreach ($groupedItems as $catid => $items)
+                                        {{-- ============================= --}}
+                                        {{-- NORMAL PIZZAS (same logic as PDF) --}}
+                                        {{-- ============================= --}}
+                                        @foreach ($normalItems as $item)
                                             @php
-                                                $firstItem = $items->first();
-                                                $qty = $firstItem->quantity;
+                                                $pizza = App\Models\PizzaItems::find($item->pizzaid);
+                                                $qty = $item->quantity;
 
-                                                // SIMPLE PIZZA (no combo)
-                                                if (!$catid) {
-                                                    $pizza = App\Models\PizzaItems::find($firstItem->pizzaid);
-
-                                                    $price = $pizza->pizzaprice;
-                                                    $total = $price * $qty;
-                                                    $discounted = $total - ($total * $firstItem->discount) / 100;
-                                                }
-                                                // COMBO ITEM
-                                                else {
-                                                    $combo = App\Models\Categories::find($catid);
-
-                                                    $price = $combo->comboprice;
-                                                    $total = $price * $qty;
-                                                    $discounted = $total - ($total * $firstItem->discount) / 100;
-
-                                                    // Fetch all pizzas inside combo
-                                                    $comboItems = App\Models\PizzaItems::where('catid', $catid)->pluck(
-                                                        'pizzaname',
-                                                    );
-                                                }
+                                                $price = $pizza->pizzaprice;
+                                                $total = $price * $qty;
                                             @endphp
 
                                             <tr>
                                                 <td colspan="2">
 
-                                                    <!-- CARD START -->
                                                     <div class="card shadow-sm mb-3" style="border-radius: 14px;">
                                                         <div class="card-body">
 
                                                             <div class="d-flex">
 
-                                                                <!-- IMAGE -->
-                                                                <img src="{{ $catid ? '/catimages/' . $combo->catimage : '/pizzaimages/' . $pizza->pizzaimage }}"
+                                                                {{-- IMAGE --}}
+                                                                <img src="/pizzaimages/{{ $pizza->pizzaimage }}"
                                                                     width="80" height="80"
                                                                     style="border-radius: 12px; object-fit: cover;">
 
                                                                 <div class="ml-3">
 
-                                                                    <!-- TITLE -->
+                                                                    {{-- TITLE --}}
                                                                     <h5 class="mb-1 font-weight-bold">
-                                                                        {{ $catid ? $combo->catname : $pizza->pizzaname }}
-                                                                    </h5>
+                                                                        {{ $pizza->pizzaname }}</h5>
 
-                                                                    <!-- PRICE + DISCOUNT -->
-                                                                    <div class="d-flex align-items-center">
+                                                                    {{-- PRICE --}}
+                                                                    <p class="mb-1 text-muted">
+                                                                        Price: ₹{{ number_format($price, 2) }}
+                                                                    </p>
 
-                                                                        <p class="mb-1 text-muted">
-                                                                            {{ $catid ? 'Combo Price:' : 'Price:' }}
-                                                                            ₹{{ number_format($price, 2) }}
-                                                                        </p>
+                                                                    {{-- QTY --}}
+                                                                    <p class="mb-1">Qty:
+                                                                        <strong>{{ $qty }}</strong></p>
 
-                                                                        <p class="mx-2 mb-1">|</p>
-
-                                                                        <p class="mb-1">
-                                                                            <span class="text-muted">Discounted
-                                                                                Price:</span>
-                                                                            <span class="text-success font-weight-bold">
-                                                                                ₹{{ number_format($discounted, 2) }}
-                                                                            </span>
-                                                                        </p>
-
-                                                                    </div>
-
-                                                                    <!-- QTY -->
+                                                                    {{-- TOTAL --}}
                                                                     <p class="mb-1">
-                                                                        Qty: <strong>{{ $qty }}</strong>
+                                                                        Total:
+                                                                        <strong>₹{{ number_format($total, 2) }}</strong>
                                                                     </p>
 
                                                                 </div>
-                                                            </div>
 
-                                                            <!-- COMBO ITEMS LIST -->
-                                                            @if ($catid)
-                                                                <hr>
-                                                                <div>
-                                                                    @foreach ($comboItems as $ci)
-                                                                        <p class="mb-1">🍕 {{ $ci }}</p>
-                                                                    @endforeach
-                                                                </div>
-                                                            @endif
+                                                            </div>
 
                                                         </div>
                                                     </div>
-                                                    <!-- CARD END -->
+
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
+
+                                        {{-- ============================= --}}
+                                        {{-- COMBO ITEMS (same logic as PDF) --}}
+                                        {{-- ============================= --}}
+                                        @foreach ($comboGroups as $catId => $comboItems)
+                                            @php
+                                                $combo = App\Models\Categories::find($catId);
+                                                $qty = $comboItems[0]->quantity;
+
+                                                $price = $combo->comboprice;
+                                                $total = $price * $qty;
+
+                                                // Child pizzas of this combo
+                                                $childPizzas = App\Models\PizzaItems::where('catid', $catId)->get();
+                                            @endphp
+
+                                            <tr>
+                                                <td colspan="2">
+
+                                                    <div class="card shadow-sm mb-3" style="border-radius: 14px;">
+                                                        <div class="card-body">
+
+                                                            <div class="d-flex">
+
+                                                                {{-- COMBO IMAGE --}}
+                                                                <img src="/catimages/{{ $combo->catimage }}"
+                                                                    width="80" height="80"
+                                                                    style="border-radius: 12px; object-fit: cover;">
+
+                                                                <div class="ml-3">
+
+                                                                    {{-- COMBO TITLE --}}
+                                                                    <h5 class="mb-1 font-weight-bold">
+                                                                        {{ $combo->catname }}</h5>
+
+                                                                    {{-- PRICE --}}
+                                                                    <p class="mb-1 text-muted">Combo Price:
+                                                                        ₹{{ number_format($price, 2) }}</p>
+
+                                                                    {{-- QTY --}}
+                                                                    <p class="mb-1">Qty:
+                                                                        <strong>{{ $qty }}</strong></p>
+
+                                                                    {{-- TOTAL --}}
+                                                                    <p class="mb-1">
+                                                                        Total:
+                                                                        <strong>₹{{ number_format($total, 2) }}</strong>
+                                                                    </p>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                            {{-- CHILD PIZZAS --}}
+                                                            <hr>
+                                                            <div>
+                                                                @foreach ($childPizzas as $ci)
+                                                                    <p class="mb-1">🍕 {{ $ci->pizzaname }}</p>
+                                                                @endforeach
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
 
                                                 </td>
                                             </tr>
                                         @endforeach
 
                                     </tbody>
+
                                 </table>
                             </div>
 

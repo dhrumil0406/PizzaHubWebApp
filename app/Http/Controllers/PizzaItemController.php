@@ -86,7 +86,7 @@ class PizzaItemController extends Controller
         if (isset($request->pizzaimagee)) {
             $imageName = time() . '.' . $request->pizzaimagee->extension();
             $publicPath = public_path('pizzaimages'); // Default Laravel public folder
-            $extraPath = '/Users/dhrumilmandaviya/Dhrumil Iphone/MCA SEM - 3/306-SP-3/pizzahub/assets/pizzaimages';
+            $extraPath = '/Applications/XAMPP/xamppfiles/htdocs/PizzaHubApp/pizzaimages';
 
             // ✅ Move to public folder first
             $request->pizzaimagee->move($publicPath, $imageName);
